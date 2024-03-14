@@ -90,8 +90,8 @@ void mergeSort(int pData[], int l, int r)
 			k++;
 		}
 	
-	// DeAlloc(arrayL);
-	// DeAlloc(arrayR);
+	DeAlloc(arrayL);
+	DeAlloc(arrayR);
 	}
 
 
