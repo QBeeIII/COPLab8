@@ -10,7 +10,7 @@ void *Alloc(size_t sz)
 	extraMemoryAllocated += sz;
 	size_t* ret = malloc(sizeof(size_t) + sz);
 	*ret = sz;
-	printf("Extra memory allocated, size: %ld\n", sz);
+	//printf("Extra memory allocated, size: %ld\n", sz);
 	return &ret[1];
 }
 
@@ -18,7 +18,7 @@ void DeAlloc(void* ptr)
 {
 	size_t* pSz = (size_t*)ptr - 1;
 	extraMemoryAllocated -= *pSz;
-	printf("Extra memory deallocated, size: %ld\n", *pSz);
+	//printf("Extra memory deallocated, size: %ld\n", *pSz);
 	free((size_t*)ptr - 1);
 }
 
@@ -31,6 +31,70 @@ size_t Size(void* ptr)
 // extraMemoryAllocated counts bytes of extra memory allocated
 void mergeSort(int pData[], int l, int r)
 {
+	if (l < r)
+	{
+		int mid = (l+r)/2;
+		mergeSort(pData, l, mid);
+		mergeSort(pData, mid+1, r);
+
+
+		int sizeL = mid-l+1;
+		int sizeR = r-mid;
+
+		int* arrayL = Alloc(4*sizeL);
+		int* arrayR = Alloc(4*sizeR);
+
+
+		for(int i = 0 ; i < sizeL; i++)
+		{
+			arrayL[i] = pData[l+i];
+		}
+
+		for(int i = 0 ; i < sizeR; i++)
+		{
+			arrayR[i] = pData[mid+1+i];
+		}
+
+
+
+		int i = 0;
+		int j = 0;
+		int k = l;
+		while (i < sizeL && j < sizeR)
+		{
+			if (arrayL[i] <= arrayR[j])
+			{
+				pData[k] = arrayL[i];
+				i++;
+			}
+			else
+			{
+				pData[k] = arrayR[j];
+				j++;
+			}
+			k++;
+		}
+
+
+		while (i < sizeL)
+		{
+			pData[k] = arrayL[i];
+			i++;
+			k++;
+		}
+
+		while (j < sizeR)
+		{
+			pData[k] = arrayR[j];
+			j++;
+			k++;
+		}
+	
+	// DeAlloc(arrayL);
+	// DeAlloc(arrayR);
+	}
+
+
 }
 
 // parses input file to an integer array
@@ -67,9 +131,10 @@ int parseData(char *inputFileName, int **ppData)
 // prints first and last 100 items in the data array
 void printArray(int pData[], int dataSz)
 {
-	int i, sz = dataSz - 100;
+	int i, sz = (dataSz > 100 ? dataSz - 100 : 0);
+	int firstHundred = (dataSz < 100 ? dataSz : 100);
 	printf("\tData:\n\t");
-	for (i=0;i<100;++i)
+	for (i=0;i<firstHundred;++i)
 	{
 		printf("%d ",pData[i]);
 	}
